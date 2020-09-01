@@ -75,7 +75,8 @@ module.exports = {
             }
         },
         // `gatsby-plugin-workspace-fields-report`,
-        `gatsby-source-studies`,
+        `gatsby-source-dashboard-anvil`,
+        `gatsby-source-dashboard-ncpi`,
         `gatsby-transformer-json`,
         {
             resolve: `gatsby-source-filesystem`,
@@ -123,6 +124,7 @@ module.exports = {
                             components: [
                                 "button",
                                 "data-dashboard",
+                                "data-dashboard-ncpi",
                                 "event-hero",
                                 "events",
                                 "figure-caption",

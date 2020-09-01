@@ -13,12 +13,9 @@ import React from "react";
 import * as AnvilGTMService from "../../utils/anvil-gtm/anvil-gtm.service";
 import { GAEntityType } from "../../utils/anvil-gtm/ga-entity-type.model";
 import DashboardFilterContext from "../context/dashboard-filter-context";
+import * as DashboardService from "../../utils/dashboard/dashboard.service";
 import * as DashboardSearchService from "../../utils/dashboard/dashboard-search.service";
 import * as DashboardSummaryService from "../../utils/dashboard/dashboard-summary.service";
-import * as DashboardWorkspaceService from "../../utils/dashboard/dashboard-workspace.service";
-
-// Template variables
-const DASHBOARD_INDEX = "/dashboard-index.json";
 
 class ProviderDashboardFilter extends React.Component {
 
@@ -196,12 +193,14 @@ class ProviderDashboardFilter extends React.Component {
 
     fetchDashboardIndex = () => {
 
-        fetch(DASHBOARD_INDEX)
+        const {dashboardIndex} = this.props;
+
+        fetch(dashboardIndex)
             .then(res => res.json())
             .then(res => {
-                const dashboardIndex = lunr.Index.load(res);
+                const index = lunr.Index.load(res);
 
-                this.setState({dashboardIndex: dashboardIndex, dashboardIndexMounted: true})
+                this.setState({dashboardIndex: index, dashboardIndexMounted: true})
             })
             .catch(err => {
                 console.log(err, "Error loading index");
@@ -496,15 +495,15 @@ class ProviderDashboardFilter extends React.Component {
     };
 
     render() {
-        const {checkboxGroups, children, facetsByTerm, workspacesQuery} = this.props,
+        const {checkboxGroups, children, dashboardEntities, facetsByTerm, resultKey} = this.props,
             {inputValue, setOfCountResultsByFacet, setOfResults, termsChecked,
                 onHandleChecked, onHandleClearInput, onHandleInput} = this.state;
-        const workspaces = DashboardWorkspaceService.getDashboardWorkspaces(workspacesQuery, setOfResults);
-        const summaries = DashboardSummaryService.getDashboardSummary(workspaces);
-        const termsCount = DashboardSearchService.getCountsByTerm(facetsByTerm, setOfCountResultsByFacet, workspacesQuery);
+        const entities = DashboardService.filterDashboardEntities(dashboardEntities, setOfResults, resultKey);
+        const summaries = DashboardSummaryService.getDashboardSummary(entities);
+        const termsCount = DashboardSearchService.getCountsByTerm(facetsByTerm, setOfCountResultsByFacet, dashboardEntities, resultKey);
         return (
             <DashboardFilterContext.Provider
-                value={{checkboxGroups, inputValue, setOfResults, summaries, termsChecked, termsCount, workspaces,
+                value={{checkboxGroups, entities, inputValue, setOfResults, summaries, termsChecked, termsCount,
                     onHandleChecked, onHandleClearInput, onHandleInput}}>
                 {children}
             </DashboardFilterContext.Provider>

@@ -2,7 +2,7 @@
  * The AnVIL
  * https://www.anvilproject.org
  *
- * The AnVIL - data workspaces component.
+ * The AnVIL - ncpi data studies component.
  */
 
 // Core dependencies
@@ -13,16 +13,16 @@ import DashboardFilterContext from "../context/dashboard-filter-context";
 import DataTable from "../data-table/data-table";
 
 // Template variables
-const TABLE_HEADERS_WORKSPACES_BY_STUDY = ["consortium", "projectId", "gapId", "studyName", "diseases", "accessType", "dataTypes", "size", "subjects"];
+const TABLE_HEADERS_WORKSPACES_BY_STUDY = ["platform", "gapId", "studyName", "diseases"];
 
-class DataWorkspaces extends React.Component {
+class DataStudiesNCPI extends React.Component {
 
     render() {
-        const {workspaces} = this.props;
+        const {studies} = this.props;
         return (
             <>
             <h2>Search Results</h2>
-            <DataTable studies tableHeaders={TABLE_HEADERS_WORKSPACES_BY_STUDY} tableRows={workspaces}/>
+            <DataTable studies tableHeaders={TABLE_HEADERS_WORKSPACES_BY_STUDY} tableRows={studies}/>
             </>
         );
     }
@@ -34,9 +34,9 @@ export default () => {
     const searching = useContext(DashboardFilterContext),
         {entities} = searching || {};
 
-    const showWorkspaces = entities.length > 0;
+    const showStudies = entities.length > 0;
 
     return (
-        showWorkspaces ? <DataWorkspaces workspaces={entities}/> : null
+        showStudies ? <DataStudiesNCPI studies={entities}/> : null
     )
 }

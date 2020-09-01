@@ -38,6 +38,13 @@ export function formatValue(value, column) {
 
     if ( value ) {
 
+        /* Handle column is "platform". */
+        if ( column === "platform" ) {
+
+            return switchStudyPlatform(value);
+        }
+
+        /* Handle column is "diseases". */
         if ( column === "diseases" ) {
 
             if ( value.length ) {
@@ -50,11 +57,13 @@ export function formatValue(value, column) {
             }
         }
 
+        /* Handle column is "sizeTB" or "size". */
         if ( column === "sizeTB" || column === "size" ) {
 
             return NumberFormatService.formatSizeToTB(value);
         }
 
+        /* Handle column with cell value as number. */
         if ( NumberFormatService.isNumber(value) ) {
 
             return value.toLocaleString();
@@ -201,6 +210,8 @@ export function switchDisplayColumnName(columnName) {
             return "dbGap Id";
         case "gapId":
             return "dbGap Id";
+        case "platform":
+            return "Platform";
         case "projectId":
             return "Terra Workspace Name";
         case "samples":
@@ -215,6 +226,32 @@ export function switchDisplayColumnName(columnName) {
             return "Size (TB)";
         default:
             return columnName;
+    }
+}
+
+/**
+ * Returns the platform display value.
+ * - "anvil" to "AnVIL"
+ * - "bioDataCatalyst" to "BioData Catalyst"
+ * - "cancerResearchDataCommons" to "Cancer Research Data Commons"
+ * - "kidsFirstDataResourceCenter" to "Kids First Data Resource Center"
+ *
+ * @param platform
+ * @returns {*}
+ */
+export function switchStudyPlatform(platform) {
+
+    switch (platform) {
+        case "anvil":
+            return "AnVIL";
+        case "bioDataCatalyst":
+            return "BioData Catalyst";
+        case "cancerResearchDataCommons":
+            return "Cancer Research Data Commons";
+        case "kidsFirstDataResourceCenter":
+            return "Kids First Data Resource Center";
+        default:
+            return "";
     }
 }
 

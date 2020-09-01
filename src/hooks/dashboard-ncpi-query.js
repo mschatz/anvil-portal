@@ -1,10 +1,10 @@
 import {useStaticQuery, graphql} from 'gatsby';
 
-export const DashboardStudyStaticQuery = () => {
-    const {allStudy} = useStaticQuery(
+export const DashboardNCPIStaticQuery = () => {
+    const {allDashboardNcpi} = useStaticQuery(
         graphql`
-        query DashboardStudyStaticQuery {
-          allStudy {
+        query DashboardNCPIStaticQuery {
+          allDashboardNcpi {
             edges {
               node {
                 consentGroup {
@@ -17,26 +17,20 @@ export const DashboardStudyStaticQuery = () => {
                   }
                   consentsStat
                 }
-                consortium
                 dbGapIdAccession
                 diseases
-                studyName
-                subjectsCount
-                subjectsTotal
-                workspaces {
-                  access
-                  dataTypes
-                  files
-                  projectId
-                  samples
-                  size
-                  subjects
+                gapId {
+                  studyUrl
+                  gapIdDisplay
                 }
+                platform
+                studyName
+                subjectsTotal
               }
             }
           }
         }
     `
     );
-    return allStudy.edges.map(n => n.node);
+    return allDashboardNcpi.edges.map(n => n.node);
 };

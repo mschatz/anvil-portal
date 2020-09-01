@@ -4,7 +4,7 @@
  *
  * The AnVIL - data dashboard component.
  * Use of this component within markdown is possible.
- * Use the tag <data-dashboard></data-dashboard>.
+ * Use the tag <data-dashboard-ncpi></data-dashboard-ncpi>.
  */
 
 // Core dependencies
@@ -12,21 +12,20 @@ import React from "react";
 
 // App dependencies
 import DataSearch from "../data-search/data-search";
-import DataSummary from "../data-summary/data-summary";
-import DataWorkspaces from "../data-workspaces/data-workspaces";
-import {DashboardWorkspaceStaticQuery} from "../../hooks/dashboard-workspace-query";
+import DataStudiesNCPI from "../data-studies-ncpi/data-studies-ncpi";
+import {DashboardNCPIStaticQuery} from "../../hooks/dashboard-ncpi-query";
 import ProviderDashboardFilter from "../provider-dashboard-filter/provider-dashboard-filter";
 import * as DashboardSearchService from "../../utils/dashboard/dashboard-search.service";
 
 // Template variables
-const DASHBOARD_INDEX = "/dashboard-index-anvil.json";
+const DASHBOARD_INDEX = "/dashboard-index-ncpi.json";
 
-function DataDashboard() {
+function DataDashboardNCPI() {
 
-    const lunrIndexRefField = "projectId";
-    const workspacesQuery = DashboardWorkspaceStaticQuery();
-    const searchFacets = DashboardSearchService.DashboardSearchFacetsAnVIL;
-    const facetsByTerm = DashboardSearchService.getDashboardFacetsByTerm(workspacesQuery, searchFacets);
+    const lunrIndexRefField = "dbGapIdAccession";
+    const studiesQuery = DashboardNCPIStaticQuery();
+    const searchFacets = DashboardSearchService.DashboardSearchFacetsNCPI;
+    const facetsByTerm = DashboardSearchService.getDashboardFacetsByTerm(studiesQuery, searchFacets);
     const checkboxGroups = DashboardSearchService.buildDashboardCheckboxesByFacet(facetsByTerm, searchFacets);
     const setOfSearchGroups = DashboardSearchService.getDashboardSetOfSearchGroups(searchFacets);
     const setOfTerms = DashboardSearchService.getDashboardSetOfTerms(facetsByTerm);
@@ -34,17 +33,16 @@ function DataDashboard() {
     return (
         <ProviderDashboardFilter
             checkboxGroups={checkboxGroups}
-            dashboardEntities={workspacesQuery}
+            dashboardEntities={studiesQuery}
             dashboardIndex={DASHBOARD_INDEX}
             facetsByTerm={facetsByTerm}
             resultKey={lunrIndexRefField}
             setOfSearchGroups={setOfSearchGroups}
             setOfTerms={setOfTerms}>
             <DataSearch/>
-            <DataSummary/>
-            <DataWorkspaces/>
+            <DataStudiesNCPI/>
         </ProviderDashboardFilter>
     )
 }
 
-export default DataDashboard;
+export default DataDashboardNCPI;
