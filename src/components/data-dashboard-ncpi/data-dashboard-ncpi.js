@@ -2,7 +2,7 @@
  * The AnVIL
  * https://www.anvilproject.org
  *
- * The AnVIL - data dashboard component.
+ * The AnVIL - NCPI data dashboard component.
  * Use of this component within markdown is possible.
  * Use the tag <data-dashboard-ncpi></data-dashboard-ncpi>.
  */
@@ -11,37 +11,34 @@
 import React from "react";
 
 // App dependencies
+import DataDashboard from "../data-dashboard/data-dashboard";
 import DataSearch from "../data-search/data-search";
-import DataStudiesNCPI from "../data-studies-ncpi/data-studies-ncpi";
+import DataTableEntities from "../data-table-entities/data-table-entities";
 import {DashboardNCPIStaticQuery} from "../../hooks/dashboard-ncpi-query";
-import ProviderDashboardFilter from "../provider-dashboard-filter/provider-dashboard-filter";
-import * as DashboardSearchService from "../../utils/dashboard/dashboard-search.service";
 
 // Template variables
-const DASHBOARD_INDEX = "/dashboard-index-ncpi.json";
+const dashboardIndexFileName = "/dashboard-index-ncpi.json";
+const lunrIndexRefField = "dbGapIdAccession";
+const searchFacets = ["platform", "consentShortNames"]; // NCPI facets (selected from NCPI study property values) for the dashboard checkboxes.
+const summaryKey = "platform";
+const tableHeadersEntities = ["platform", "gapId", "studyName", "diseases", "consentCodes"];
+const tableHeadersSummary = ["platform", "cohorts"];
 
 function DataDashboardNCPI() {
 
-    const lunrIndexRefField = "dbGapIdAccession";
-    const studiesQuery = DashboardNCPIStaticQuery();
-    const searchFacets = DashboardSearchService.DashboardSearchFacetsNCPI;
-    const facetsByTerm = DashboardSearchService.getDashboardFacetsByTerm(studiesQuery, searchFacets);
-    const checkboxGroups = DashboardSearchService.buildDashboardCheckboxesByFacet(facetsByTerm, searchFacets);
-    const setOfSearchGroups = DashboardSearchService.getDashboardSetOfSearchGroups(searchFacets);
-    const setOfTerms = DashboardSearchService.getDashboardSetOfTerms(facetsByTerm);
+    const dashboardEntities = DashboardNCPIStaticQuery();
 
     return (
-        <ProviderDashboardFilter
-            checkboxGroups={checkboxGroups}
-            dashboardEntities={studiesQuery}
-            dashboardIndex={DASHBOARD_INDEX}
-            facetsByTerm={facetsByTerm}
-            resultKey={lunrIndexRefField}
-            setOfSearchGroups={setOfSearchGroups}
-            setOfTerms={setOfTerms}>
+        <DataDashboard dashboardEntities={dashboardEntities}
+                       dashboardIndexFileName={dashboardIndexFileName}
+                       resultKey={lunrIndexRefField}
+                       searchFacets={searchFacets}
+                       summaryKey={summaryKey}
+                       tableHeadersEntities={tableHeadersEntities}
+                       tableHeadersSummary={tableHeadersSummary}>
             <DataSearch/>
-            <DataStudiesNCPI/>
-        </ProviderDashboardFilter>
+            <DataTableEntities ncpi/>
+        </DataDashboard>
     )
 }
 

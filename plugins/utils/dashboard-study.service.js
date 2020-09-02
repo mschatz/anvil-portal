@@ -12,6 +12,36 @@ const path = require("path");
 const {buildDict, buildExchange, buildReport, getXMLUrls} = require(path.resolve(__dirname, "./dashboard-xml.service.js"));
 
 /**
+ * Returns a list of consent code short name as a display value, and consent code long name as value
+ * for node type RowCellValueTooltip.
+ *
+ * @param consentGroup
+ * @returns {Array}
+ */
+const buildConsentCodes = function buildConsentCodes(consentGroup) {
+
+    if ( consentGroup.consents ) {
+
+        /* Return an array of consent short names. */
+        return consentGroup.consents.reduce((acc, consent) => {
+
+            const consentDisplay = consent.consentShortName;
+            const consentValue = consent.consentLongName;
+
+            if ( consentDisplay ) {
+
+                const consentCode = buildNodeTypeRowCellValueTooltip(consentDisplay, consentValue);
+                acc.push(consentCode);
+            }
+
+            return acc;
+        }, [])
+    }
+
+    return [];
+};
+
+/**
  * Returns a FE compatible model of dbGapId / dbGapIdAccession, comprising of either ID value
  * and a corresponding study url (if it exists).
  *
@@ -54,6 +84,23 @@ const buildXMLStudy = async function buildXMLStudy(gapAccession) {
 };
 
 /**
+ * Returns a list of consent short names.
+ *
+ * @param consentCodes
+ * @returns {Array}
+ */
+const getConsentShortNames = function getConsentShortNames(consentCodes) {
+
+    if ( consentCodes ) {
+
+        /* Return an array of consent short names. */
+        return consentCodes.map(consent => consent.displayValue);
+    }
+
+    return [];
+};
+
+/**
  * Returns the subject's consents specified by consentId.
  *
  * @param subjectByStudy
@@ -71,6 +118,24 @@ const getSubjectConsents = function getSubjectConsents(subjectByStudy, consentId
         return buildSubjectConsents(variablesByStudy, studyConsentGroups);
     }
 };
+
+/**
+ * Returns RowCellValueTooltip object.
+ * Facilitates the display of a term with a tooltip within the dashboard table where
+ * - "displayValue" is the displayed value.
+ * - "tooltipValue" is the tooltip value.
+ *
+ * @param displayValue
+ * @param value
+ * @returns {{displayValue: *, value: *}}
+ */
+function buildNodeTypeRowCellValueTooltip(displayValue, value) {
+
+    return {
+        displayValue: displayValue,
+        tooltipValue: value
+    }
+}
 
 /**
  * Builds the subject consents model.
@@ -107,6 +172,8 @@ function buildSubjectConsents(variablesByStudy, studyConsentGroups) {
     }
 }
 
+module.exports.buildConsentCodes = buildConsentCodes;
 module.exports.buildGapId = buildGapId;
 module.exports.buildXMLStudy = buildXMLStudy;
+module.exports.getConsentShortNames = getConsentShortNames;
 module.exports.getSubjectConsents = getSubjectConsents;

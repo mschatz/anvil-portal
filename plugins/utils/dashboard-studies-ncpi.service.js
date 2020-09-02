@@ -11,7 +11,7 @@ const path = require("path");
 
 // App dependencies
 const {sortDataByDuoTypes} = require(path.resolve(__dirname, "./dashboard-sort.service.js"));
-const {buildGapId, buildXMLStudy, getSubjectConsents} = require(path.resolve(__dirname, "./dashboard-study.service.js"));
+const {buildConsentCodes, buildGapId, buildXMLStudy, getConsentShortNames, getSubjectConsents} = require(path.resolve(__dirname, "./dashboard-study.service.js"));
 
 // Template variables
 const fileNamePlatformByNCPI = "dashboard-plaform-by-ncpi.txt";
@@ -67,6 +67,8 @@ async function buildNCPIDashboardStudy(gapAccession, platform) {
 
     /* Assemble the study variables. */
     const consents = getSubjectConsents(subjectReport, subjectDictionary.variableConsentId, studyExchange.consentGroups);
+    const consentCodes = buildConsentCodes(consents);
+    const consentShortNames = getConsentShortNames(consentCodes);
     const diseases = studyExchange.diseases;
     const gapId = buildGapId(gapAccession, urls.studyUrl);
     const studyPlatform = platform;
@@ -74,7 +76,8 @@ async function buildNCPIDashboardStudy(gapAccession, platform) {
     const subjectsTotal = consents.consentsStat;
 
     return {
-        consentGroup: consents,
+        consentCodes: consentCodes,
+        consentShortNames: consentShortNames,
         dbGapIdAccession: gapAccession,
         diseases: diseases,
         gapId: gapId,
@@ -125,7 +128,7 @@ async function buildPlatformByGapIdAccession() {
     else {
 
         /* Text file does not exist. */
-        console.log("Error: file dashboard-plaform-by-ncpi.csv cannot be found.")
+        console.log("Error: file dashboard-plaform-by-ncpi.csv cannot be found.");
 
         return new Map();
     }

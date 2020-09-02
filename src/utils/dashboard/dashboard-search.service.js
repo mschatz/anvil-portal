@@ -16,18 +16,6 @@ const setOfDenyListTerms = new Set(["NA", "--", "", null]);
 /* Search input deny list. */
 export const DenyListInputs = ["^", "~", ":", "-"];
 
-/* Set of AnVIL facets (selected from workspace property values) for the dashboard search function. */
-export const DashboardSearchFacetsAnVIL = [
-    "consortium",
-    "accessType",
-    "dataTypes"
-];
-
-/* Set of NCPI facets (selected from NCPI study property values) for the dashboard search function. */
-export const DashboardSearchFacetsNCPI = [
-    "platform"
-];
-
 /**
  * Returns FE model of checkboxes by facet.
  *
@@ -155,6 +143,29 @@ export function getDashboardSetOfTerms(facetsByTerm) {
 }
 
 /**
+ * Returns a map object of term search value by term display where
+ * - term display is the term value
+ * - term search value is the term value, with white space, hyphens or brackets are changed to an underscore.
+ * e.g. "GTEx (v8)" returns "GTEx__v8_".
+ *
+ * @param facetsByTerm
+ * @returns {Map}
+ */
+export function getDashboardTermSearchValueByTermDisplay(facetsByTerm) {
+
+    const termSearchValueByTermDisplay = new Map();
+
+    [...facetsByTerm.keys()].forEach(termDisplay => {
+
+        /* Replace any white space, hyphens or brackets with an underscore. */
+        const termSearchValue = termDisplay.replace(/(-|\s|\(|\))/g, "_");
+        termSearchValueByTermDisplay.set(termDisplay, termSearchValue);
+    });
+
+    return termSearchValueByTermDisplay;
+}
+
+/**
  * Builds a FE model of checkboxes for the specified facet.
  *
  * @param facet
@@ -168,7 +179,7 @@ function buildCheckboxesByFacet(facet, facetsByTerm) {
         if ( ft === facet ) {
 
             const checkbox = {
-                label: switchEntityLabelDisplayText(term),
+                label: switchCheckboxLabelDisplayText(term),
                 value: term
             };
 
@@ -192,9 +203,9 @@ function getTermCounter(facet, term, entities) {
 
         if ( DashboardService.isArray(entity[facet]) ) {
 
-            entity[facet].forEach(wf => {
+            entity[facet].forEach(ef => {
 
-                if ( wf === term ) {
+                if ( ef === term ) {
 
                     acc++;
                 }
@@ -213,21 +224,21 @@ function getTermCounter(facet, term, entities) {
 }
 
 /**
- * Returns entity text value in format compatible for display.
+ * Returns checkbox text value in format compatible for display.
  *
  * @param label
  * @returns {*}
  */
-function switchEntityLabelDisplayText(label) {
+function switchCheckboxLabelDisplayText(label) {
 
     switch (label) {
         case "anvil":
             return DashboardTableService.switchStudyPlatform(label);
-        case "bioDataCatalyst":
+        case "BDC":
             return DashboardTableService.switchStudyPlatform(label);
-        case "cancerResearchDataCommons":
+        case "CRDC":
             return DashboardTableService.switchStudyPlatform(label);
-        case "kidsFirstDataResourceCenter":
+        case "KFDRC":
             return DashboardTableService.switchStudyPlatform(label);
         case "WES":
             return "Whole Exome Sequencing";

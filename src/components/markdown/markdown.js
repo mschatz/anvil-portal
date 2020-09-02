@@ -11,7 +11,7 @@ import rehypeReact from "rehype-react";
 
 // App dependencies
 import Button from "../button/button";
-import DataDashboard from "../data-dashboard/data-dashboard";
+import DataDashboardAnVIL from "../data-dashboard-anvil/data-dashboard-anvil";
 import DataDashboardNCPI from "../data-dashboard-ncpi/data-dashboard-ncpi";
 import EventHero from "../event-hero/event-hero";
 import Events from "../events/events";
@@ -63,7 +63,7 @@ class Markdown extends React.Component {
             createElement: React.createElement,
             components: {
                 "button": Button,
-                "data-dashboard": DataDashboard,
+                "data-dashboard-anvil": DataDashboardAnVIL,
                 "data-dashboard-ncpi": DataDashboardNCPI,
                 "event-hero": EventHero,
                 "events": Events,

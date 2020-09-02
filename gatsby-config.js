@@ -123,7 +123,7 @@ module.exports = {
                         options: {
                             components: [
                                 "button",
-                                "data-dashboard",
+                                "data-dashboard-anvil",
                                 "data-dashboard-ncpi",
                                 "event-hero",
                                 "events",

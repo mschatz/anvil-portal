@@ -11,7 +11,7 @@ const lunr = require("lunr");
 const path = require("path");
 
 // App dependencies
-const {getIndexFieldDiseases, getIndexFieldGapNumber, getIndexFieldStudyName} = require(path.resolve(__dirname, "./dashboard-index-field.service.js"));
+const {getIndexFieldConsentShortNames, getIndexFieldDiseases, getIndexFieldGapNumber, getIndexFieldStudyName} = require(path.resolve(__dirname, "./dashboard-index-field.service.js"));
 
 /**
  * Generates the lunr search index for the NCPI dashboard.
@@ -24,6 +24,7 @@ const generateNCPIDashboardIndex = function generateNCPIDashboardIndex(studies) 
     const dashboardIndex = lunr(function () {
 
         this.ref("dbGapIdAccession");
+        this.field("consentShortNames");
         this.field("dbGapIdNumber");
         this.field("diseases");
         this.field("platform");
@@ -34,12 +35,14 @@ const generateNCPIDashboardIndex = function generateNCPIDashboardIndex(studies) 
 
         studies.forEach(study => {
 
+            const consentShortNames = getIndexFieldConsentShortNames(study.consentShortNames);
             const dbGapIdNumber = getIndexFieldGapNumber(study.dbGapIdAccession);
             const diseases = getIndexFieldDiseases(study.diseases);
             const platform = study.platform;
             const studyName = getIndexFieldStudyName(study.studyName);
 
             this.add({
+                "consentShortNames": consentShortNames,
                 "dbGapIdAccession": study.dbGapIdAccession,
                 "dbGapIdNumber": dbGapIdNumber,
                 "diseases": diseases,

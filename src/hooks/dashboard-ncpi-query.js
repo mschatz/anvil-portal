@@ -7,16 +7,11 @@ export const DashboardNCPIStaticQuery = () => {
           allDashboardNcpi {
             edges {
               node {
-                consentGroup {
-                  consents {
-                    consentCode
-                    consentLongName
-                    consentName
-                    consentShortName
-                    consentStat
-                  }
-                  consentsStat
+                consentCodes {
+                  displayValue
+                  tooltipValue
                 }
+                consentShortNames
                 dbGapIdAccession
                 diseases
                 gapId {

@@ -11,6 +11,7 @@ import DataTableRowCellEllipsis from "../../components/data-table-row-cell-ellip
 import DataTableRowCellGapId from "../../components/data-table-row-cell-gap-id/data-table-row-cell-gap-id";
 import DataTableRowCellProjectId from "../../components/data-table-row-cell-project-id/data-table-row-cell-project-id";
 import DataTableRowCellRedirect from "../../components/data-table-row-cell-redirect/data-table-row-cell-redirect";
+import DataTableRowCellValuesTooltip from "../../components/data-table-row-cell-values-tooltip/data-table-row-cell-values-tooltip";
 import DataTableRowCellX from "../../components/data-table-row-cell-x/data-table-row-cell-x";
 import * as NumberFormatService from "../number-format.service";
 import {RIGHT_ALIGN_COLUMNS} from "./right-align-columns";
@@ -113,6 +114,8 @@ export function getReactElementType(columnName, summaryTable) {
     switch (columnName) {
         case "accessType":
             return DataTableRowCellRedirect;
+        case "consentCodes":
+            return DataTableRowCellValuesTooltip;
         case "dataTypes":
             return DataTableRowCellDataTypes;
         case "diseases":
@@ -129,11 +132,17 @@ export function getReactElementType(columnName, summaryTable) {
 /**
  * Returns the table class name.
  *
+ * @param ncpi
  * @param studies
  * @param summary
  * @returns {*}
  */
-export function getTableName(studies, summary) {
+export function getTableName(ncpi, studies, summary) {
+
+    if ( ncpi ) {
+
+        return "ncpi";
+    }
 
     if ( studies ) {
 
@@ -186,6 +195,10 @@ export function switchDisplayColumnName(columnName) {
             return "Consent Groups";
         case "consents":
             return "Access";
+        case "consentCodes":
+            return "Consent Codes";
+        case "consentShortNames":
+            return "Consent Codes";
         case "consentStat":
             return "Subjects";
         case "consortia":
@@ -232,9 +245,9 @@ export function switchDisplayColumnName(columnName) {
 /**
  * Returns the platform display value.
  * - "anvil" to "AnVIL"
- * - "bioDataCatalyst" to "BioData Catalyst"
- * - "cancerResearchDataCommons" to "Cancer Research Data Commons"
- * - "kidsFirstDataResourceCenter" to "Kids First Data Resource Center"
+ * - "BDC" to "BioData Catalyst"
+ * - "CRDC" to "Cancer Research Data Commons"
+ * - "KFDRC" to "Kids First Data Resource Center"
  *
  * @param platform
  * @returns {*}
@@ -244,11 +257,11 @@ export function switchStudyPlatform(platform) {
     switch (platform) {
         case "anvil":
             return "AnVIL";
-        case "bioDataCatalyst":
+        case "BDC":
             return "BioData Catalyst";
-        case "cancerResearchDataCommons":
+        case "CRDC":
             return "Cancer Research Data Commons";
-        case "kidsFirstDataResourceCenter":
+        case "KFDRC":
             return "Kids First Data Resource Center";
         default:
             return "";

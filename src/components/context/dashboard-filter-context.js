@@ -17,10 +17,13 @@ const DashboardFilterContext = React.createContext({
     setOfResults: new Set(),
     setOfResultsBySearchGroups: new Map(),
     summaries: [],
+    tableHeadersEntities: [],
+    tableHeadersSummary: [],
     termsChecked: new Map(),
     termsCount: new Map(),
     onHandleChecked: () => {},
     onHandleClearInput: () => {},
+    onHandleInitializeDashboard: () => {},
     onHandleInput: () => {},
 });
 

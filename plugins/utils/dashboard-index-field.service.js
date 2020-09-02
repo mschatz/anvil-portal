@@ -24,11 +24,12 @@ const findStudy = function findStudy(studies, dbGapIdAccession) {
 
 /**
  * Return the access type for the specified workspace.
+ * Facilitates the indexing of access type into searchable checkbox values.
  * Indexes the facet "accessType" with unique term values.
  *
- * - "controlled" for "Controlled Access" when study exists
- * - "open" for "Open Access" when access: "Public"
- * - "consortium" for "Consortium Access" when access: "Private" (and without study)
+ * - "Controlled_Access" for "Controlled Access" when study exists
+ * - "Open_Access" for "Open Access" when access: "Public"
+ * - "Consortium_Access" for "Consortium Access" when access: "Private" (and without study)
  *
  * @param workspace
  * @param study
@@ -41,28 +42,49 @@ const getIndexFieldAccessType = function getIndexFieldAccessType(workspace, stud
     /* "researcher" - workspace with a study. */
     if ( studyExits ) {
 
-        return "controlled";
+        return "Controlled_Access";
     }
 
     /* "consortia" - private workspace. */
     if ( workspace.access === "Private" ) {
 
-        return "consortium";
+        return "Consortium_Access";
     }
 
     /* "public" - public workspace. */
     if ( workspace.access === "Public" ) {
 
-        return "open";
+        return "Open_Access";
     }
 
     return ""
 };
 
 /**
+ * Returns the study's consent codes as a concatenated string value.
+ * Facilitates the indexing of an array of consent codes into searchable checkbox values.
+ * Replaces any white space, hyphens with an underscore.
+ * e.g. "gru-irb" returns "gru_irb".
+ *
+ * @param consentShortNames
+ * @returns {string}
+ */
+const getIndexFieldConsentShortNames = function getIndexFieldConsentShortNames(consentShortNames) {
+
+    if ( consentShortNames ) {
+
+        /* Handle case where consent short name is hyphenated "-". */
+        return consentShortNames.map(shortName => shortName.replace(/(-|\s)/g, "_")).join(" ");
+    }
+
+    return "";
+};
+
+/**
  * Returns the consortium.
- * Indexes the consortium, facilitating partial searches within the consortium display name.
- * Handles special case "1000 genomes", where "1000" may also be represented by "thousand".
+ * Facilitates the indexing of consortium into a searchable checkbox value.
+ * Replaces any white space, hyphens or brackets with an underscore.
+ * e.g. "1000 genomes" returns "1000_genomes" and "GTEx (v8)" returns "GTEx__v8_".
  *
  * @param consortium
  * @returns {string}
@@ -71,23 +93,16 @@ const getIndexFieldConsortiumName = function getIndexFieldConsortiumName(consort
 
     if ( consortium ) {
 
-        /* Handles consortium "1000 genomes". */
-        if (consortium.toLowerCase().includes("1000 genomes")) {
-
-            return `${consortium} thousand`;
-        }
-
-        return consortium;
+        return consortium.replace(/(-|\s|\(|\))/g, "_");
     }
 
     return "";
 };
 
 /**
- * Returns the data types as a string joined by a space.
- * Indexes data types, facilitating varying text searches for each data type.
- * i.e. indexes data type for the FE data type display name e.g. "WGS"
- * as well as the long-hand version of the data type e.g. "whole genome".
+ * Returns the dataTypes.
+ * Facilitates the indexing of an array of data types into searchable checkbox values.
+ * Replaces any white space or hyphens with an underscore.
  *
  * @param dataTypes
  * @returns {string}
@@ -98,27 +113,12 @@ const getIndexFieldDataTypes = function getIndexFieldDataTypes(dataTypes) {
 
         return dataTypes.reduce((acc, dataType) => {
 
-            const dataTypeStr = dataType.toLowerCase();
+            if ( dataType ) {
 
-            /* Add dataType to accumulator. */
-            acc = `${acc} ${dataTypeStr}`;
+                const dataTypeSearchStr = dataType.replace(/(-|\s)/g, "_");
 
-            /* Case "WGS" - add "whole genome". */
-            if (dataTypeStr.includes("wgs")) {
-
-                acc = `${acc} whole genome`;
-            }
-
-            /* Case "WES" - add "whole exome". */
-            if (dataTypeStr.includes("wes")) {
-
-                acc = `${acc} whole exome`;
-            }
-
-            /* Case "VCF" - add "variant call format". */
-            if (dataTypeStr.includes("vcf")) {
-
-                acc = `${acc} variant call format`
+                /* Add dataType to accumulator. */
+                acc = `${acc} ${dataTypeSearchStr}`;
             }
 
             return acc;
@@ -158,7 +158,7 @@ const getIndexFieldDiseases = function getIndexFieldDiseases(diseases, consortiu
 /**
  * Returns the GapId's corresponding number.
  * Indexes GapId's number - strips off any prefix/suffix.
- * e.g. a GapId of "phs001395.v1.p1" would return "1395".
+ * e.g. a GapId of "phs001395.v1.p1" returns "1395".
  *
  * @param gapId
  * @returns {string}
@@ -223,6 +223,7 @@ function convertToSortableValue(str) {
 
 module.exports.findStudy = findStudy;
 module.exports.getIndexFieldAccessType = getIndexFieldAccessType;
+module.exports.getIndexFieldConsentShortNames = getIndexFieldConsentShortNames;
 module.exports.getIndexFieldConsortiumName = getIndexFieldConsortiumName;
 module.exports.getIndexFieldDataTypes = getIndexFieldDataTypes;
 module.exports.getIndexFieldDiseases = getIndexFieldDiseases;
