@@ -4,7 +4,7 @@ title: "Events"
 ---
 #AnVIL Community Events
 
-##Upcoming
+##Upcoming -- see comment
 <Events></Events>
 
 ##Past
